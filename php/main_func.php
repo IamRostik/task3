@@ -21,23 +21,23 @@ function addUser(){
         global $pdo;
         $status = isset($_POST['status']) ? '1' : '0';
         $res = $pdo->prepare("INSERT INTO `user`(first_name, last_name, status, role) VALUES (?, ?, ?, ?)");
-        $res->execute([trim($_POST['first_name']), trim($_POST['last_name']), $status, $_POST['role']]);
+        $res->execute([str_replace(' ','',$_POST['first_name']), str_replace(' ','',$_POST['last_name']), $status, $_POST['role']]);
         echo showUsers();
         die();
     }
 }
 
 function editUser(){
-    if (isset($_GET['type']) && $_GET['type'] == 'edit' && !empty($_POST)){
+    if (isset($_GET['type']) && !empty($_POST) && $_GET['type'] == 'edit'){
         global $pdo;
         $status = isset($_POST['status']) ? '1' : '0';
         $res = $pdo->prepare("UPDATE `user` SET first_name = ?, last_name = ?, status = ?, role = ? WHERE id = ?");
-        $res->execute([trim($_POST['first_name']), trim($_POST['last_name']), $status, $_POST['role'], $_GET['id']]);
+        $res->execute([str_replace(' ','',$_POST['first_name']), str_replace(' ','',$_POST['last_name']), $status, $_POST['role'], $_GET['id']]);
         echo showUsers();
         die();
     }
 
-    if (isset($_GET['type']) && $_GET['type'] == 'edit' && empty($_POST)){
+    if (isset($_GET['type']) && empty($_POST) && $_GET['type'] == 'edit'){
         global $pdo;
         $ids = explode(',',$_GET['id']);
         $res = $pdo->prepare("UPDATE `user` SET status = ? WHERE id = ?");

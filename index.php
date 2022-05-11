@@ -65,8 +65,7 @@ require_once 'php/main_func.php';
                       <?php foreach ($users as $user): ?>
                           <tr>
                               <td class="align-middle">
-                                  <div
-                                          class="custom-control custom-control-inline custom-checkbox custom-control-nameless m-0 align-top">
+                                  <div class="custom-control custom-control-inline custom-checkbox custom-control-nameless m-0 align-top">
                                       <input type="checkbox" class="custom-control-input" id="item-<?=$user['id']?>" value="<?=$user['id']?>">
                                       <label class="custom-control-label" for="item-<?=$user['id']?>"></label>
                                   </div>
@@ -129,13 +128,13 @@ require_once 'php/main_func.php';
                           <div class="col">
                             <div class="form-group">
                               <label>First Name</label>
-                              <input class="form-control firstname" type="text" name="first_name" placeholder="John" value="John">
+                              <input class="form-control firstname" type="text" name="first_name">
                             </div>
                           </div>
                           <div class="col">
                             <div class="form-group">
                               <label>Last name</label>
-                              <input class="form-control lastname" type="text" name="last_name" placeholder="Smith" value="Smith">
+                              <input class="form-control lastname" type="text" name="last_name">
                             </div>
                           </div>
                         </div>

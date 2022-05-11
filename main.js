@@ -18,8 +18,8 @@ $('body').on('click','.edit',function () {
     let id = $(this).data('id');
     let firstname = $(this).data('firstname');
     let lastname = $(this).data('lastname');
-    $('.modal .firstname').attr('value',firstname);
-    $('.modal .lastname').attr('value',lastname);
+    $('.modal .modal-body .firstname').val(firstname);
+    $('.modal .modal-body .lastname').val(lastname);
     $('.modal .modal-body').append("<input type='hidden' id='hidden' value='"+id+"'>")
     $('.modal .modal-title').html('Edit user')
 })
@@ -45,8 +45,8 @@ $('.modal button:submit').click(function (e) {
         data: $('.form').serialize(),
         beforeSuccess: $('tbody').fadeOut(300),
         success: function (res) {
-            $('.modal').modal('hide')
             $('tbody').html(res).fadeIn(300)
+            $('.modal').modal('hide')
             $('#all-items').prop('checked', false)
         }
     })
