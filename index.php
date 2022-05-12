@@ -128,6 +128,8 @@ require_once 'php/main_func.php';
                                           <input class="form-control" id="firstname" type="text" name="first_name" value="">
                                       </div>
                                   </div>
+                              </div>
+                              <div class="row">
                                   <div class="col">
                                       <div class="form-group">
                                           <label for="lastname">Last name</label>
@@ -135,7 +137,7 @@ require_once 'php/main_func.php';
                                       </div>
                                   </div>
                               </div>
-                              <div class="row mb-2 mt-2">
+                              <div class="row mt-2">
                                   <div class="col">
                                       <div class="custom-control custom-switch">
                                           <input type="checkbox" class="custom-control-input" id="customSwitch1" name="status">
@@ -143,7 +145,7 @@ require_once 'php/main_func.php';
                                       </div>
                                   </div>
                                   <div class="col">
-                                      <select name="role" id="role" class="form-control inline-block">
+                                      <select name="role" id="role" class="form-control">
                                           <option value="user">User</option>
                                           <option value="admin">Admin</option>
                                       </select>
