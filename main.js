@@ -14,28 +14,31 @@ $('body').on('click','.align-middle input:checkbox',function () {
         }
 })
 // Додавання та редагування юзерів
-$('body').on('click','.edit',function () {
-    let id = $(this).data('id');
-    let firstname = $(this).data('firstname');
-    let lastname = $(this).data('lastname');
-    $('.modal .modal-body .firstname').val(firstname);
-    $('.modal .modal-body .lastname').val(lastname);
-    $('.modal .modal-body').append("<input type='hidden' id='hidden' value='"+id+"'>")
-    $('.modal .modal-title').html('Edit user')
-})
-$('body').on('click','.add',function () {
-    $('.modal .modal-title').html('Add user')
+
+$('#add-edit').on('show.bs.modal', function (event) {
+    let button = $(event.relatedTarget), // Button that triggered the modal
+        recipient = button.data('whatever'); // Extract info from data-* attributes
+    let modal = $(this)
+    if (recipient === 'Add') modal.find('.submit').removeAttr('value');
+    if (recipient === 'Edit'){
+        let id = button.data('id'),
+            firstname = button.data('firstname'),
+            lastname = button.data('lastname');
+        modal.find('#firstname').val(firstname);
+        modal.find('#lastname').val(lastname);
+        modal.find('.submit').attr('value',() => id);
+    }
+    modal.find('.modal-title').text(recipient + ' user')
 })
 
-$('.modal').on('hidden.bs.modal', function (e) {
-    $('.modal #hidden').remove();
-})
-
-$('.modal button:submit').click(function (e) {
+$('#add-edit button:submit').click(function (e) {
     e.preventDefault();
-    let new_url = '';
-    if ($(`.modal #hidden`).length) {
-        new_url = url + '?type=edit&id=' + $('.modal #hidden').val();
+
+    let id = $(this).val(),
+        new_url = ''
+    console.log(id)
+    if (id) {
+        new_url = url + '?type=edit&id=' + id;
     } else {
         new_url = url + '?type=add'
     }
@@ -53,10 +56,14 @@ $('.modal button:submit').click(function (e) {
 })
 
 
+
+
 // Кнопка видалення юзерів
 $('body').on('click', '.delete',function () {
-    let res = confirm('Are you sure?');
-    if (!res) return false;
+
+    let agree = confirm('Are you sure?');
+    if (!agree) return false;
+
     const id = $(this).data('id');
     $.ajax({
         url: url + '?type=del',
@@ -69,6 +76,7 @@ $('body').on('click', '.delete',function () {
         }
     })
 })
+
 // Меню під і над таблицею
 $('body').on('click', '.ok-button',function () {
 
@@ -79,13 +87,20 @@ $('body').on('click', '.ok-button',function () {
         })
     let res = $(this).parents('.col-sm-4').find('option').filter(':selected').val()
     if (!data){
-        alert('Не вибрані юзери');
+        $('#alert').modal('show');
+        $('#alert .modal-body').text('Не вибрані юзери!');
         return false;
     }
     if (res === 'default'){
-        alert('Треба вибрати дію');
+        $('#alert').modal('show');
+        $('#alert .modal-body').text('Треба вибрати один із варіантів!');
         return false;
     }
+    if (res === 'del'){
+        let agree = confirm('Are you sure?');
+        if (!agree) return false;
+    }
+
     data = data.slice(0,-1);
     let new_url = '';
     if (res === 'del') {

@@ -28,6 +28,7 @@ function addUser(){
 }
 
 function editUser(){
+
     if (isset($_GET['type']) && !empty($_POST) && $_GET['type'] == 'edit'){
         global $pdo;
         $status = isset($_POST['status']) ? '1' : '0';
