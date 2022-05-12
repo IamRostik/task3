@@ -153,7 +153,7 @@ require_once 'php/main_func.php';
                       </div>
                       <div class="modal-footer">
                           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                          <button type="submit" class="submit btn btn-primary">Send message</button>
+                          <button type="submit" class="submit btn btn-primary">Okay</button>
                       </div>
                   </div>
               </div>
