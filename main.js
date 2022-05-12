@@ -19,7 +19,11 @@ $('#add-edit').on('show.bs.modal', function (event) {
     let button = $(event.relatedTarget), // Button that triggered the modal
         recipient = button.data('whatever'); // Extract info from data-* attributes
     let modal = $(this)
-    if (recipient === 'Add') modal.find('.submit').removeAttr('value');
+    if (recipient === 'Add'){
+        modal.find('.submit').removeAttr('value');
+        modal.find('#firstname').val('');
+        modal.find('#lastname').val('');
+    }
     if (recipient === 'Edit'){
         let id = button.data('id'),
             firstname = button.data('firstname'),

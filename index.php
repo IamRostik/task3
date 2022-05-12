@@ -125,13 +125,13 @@ require_once 'php/main_func.php';
                                   <div class="col">
                                       <div class="form-group">
                                           <label for="firstname">First Name</label>
-                                          <input class="form-control" id="firstname" type="text" name="first_name" placeholder="John" value="John">
+                                          <input class="form-control" id="firstname" type="text" name="first_name" value="">
                                       </div>
                                   </div>
                                   <div class="col">
                                       <div class="form-group">
                                           <label for="lastname">Last name</label>
-                                          <input class="form-control" id="lastname" type="text" name="last_name" placeholder="Smith" value="Smith">
+                                          <input class="form-control" id="lastname" type="text" name="last_name" value="">
                                       </div>
                                   </div>
                               </div>
