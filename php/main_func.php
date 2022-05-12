@@ -17,7 +17,7 @@ function showUsers(){
 }
 
 function addUser(){
-    if (isset($_GET['type']) && $_GET['type'] == 'add' && isset($_POST)){
+    if (isset($_GET['type']) && isset($_POST) && $_GET['type'] == 'add' ){
         global $pdo;
         $status = isset($_POST['status']) ? '1' : '0';
         $res = $pdo->prepare("INSERT INTO `user`(first_name, last_name, status, role) VALUES (?, ?, ?, ?)");
