@@ -26,8 +26,8 @@ $('#add-edit').on('show.bs.modal', function (event) {
     }
     if (recipient === 'Edit'){
         let id = button.data('id'),
-            name_first = button.data('namefirst'),
-            name_last = button.data('namelast');
+            name_first = button.attr('data-namefirst'),
+            name_last = button.attr('data-namelast');
         modal.find('#name_first').val(name_first);
         modal.find('#name_last').val(name_last);
         modal.find('.submit').attr('value',() => id);
@@ -40,7 +40,6 @@ $('#add-edit button:submit').click(function (e) {
 
     let id = $(this).val(),
         new_url = ''
-    console.log(id)
     if (id) {
         new_url = url + '?type=edit&id=' + id;
     } else {
@@ -52,7 +51,6 @@ $('#add-edit button:submit').click(function (e) {
         data: $('.form').serialize(),
         success: function (res) {
             res = JSON.parse(res)
-            console.log(res)
             if (res.error !== null){
                 $('.modal').modal('hide')
                 $('#alert').modal('show');
@@ -76,21 +74,21 @@ $('#add-edit button:submit').click(function (e) {
 
 // Кнопка видалення юзерів
 $('body').on('click', '.delete',function () {
-
-    let agree = confirm('Are you sure?');
-    if (!agree) return false;
-
     const id = $(this).data('id');
-    $.ajax({
-        url: url + '?type=del',
-        type: 'GET',
-        data: {id: id},
-        success: function (res) {
-            res = JSON.parse(res)
-            console.log(res)
-            deleteUser(res)
-        }
-    })
+        modalConfirm(function (bool) {
+            if (bool){
+                $.ajax({
+                    url: url + '?type=del',
+                    type: 'GET',
+                    data: {id: id},
+                    success: function (res) {
+                        res = JSON.parse(res)
+                        deleteUser(res)
+                        $('#alert').modal('hide');
+                    }
+                })
+            }
+        })
 })
 
 // Меню під і над таблицею
@@ -104,43 +102,68 @@ $('body').on('click', '.ok-button',function () {
     let act = $(this).parents('.col-sm-4').find('option').filter(':selected').val()
     if (!data){
         $('#alert').modal('show');
-        $('#alert .modal-body').text('Не вибрані юзери!');
+        $('#alert .modal-body').text('Not selected users!');
         return false;
     }
-    if (act === 'default'){
-        $('#alert').modal('show');
-        $('#alert .modal-body').text('Треба вибрати один із варіантів!');
-        return false;
-    }
-    if (act === 'del'){
-        let agree = confirm('Are you sure?');
-        if (!agree) return false;
-    }
-
     data = data.slice(0,-1);
     let new_url = '';
-    if (act === 'del') {
-        new_url = url + '?type=del';
-    } else {
-        new_url = url + '?type=edit';
-    }
+    switch (act){
 
+        case 'default':
+        $('#alert').modal('show');
+        $('#alert .modal-body').text('Choose an action!');
+        return false;
+
+        case 'del':
+        new_url = url + '?type=del';
+        modalConfirm(function (bool) {
+            if (bool){
+                $.ajax({
+                    url: new_url,
+                    type: 'GET',
+                    data: {id: data, act: act},
+                    success: function (res) {
+                        res = JSON.parse(res);
+                        deleteUser(res)
+                        $('#alert').modal('hide');
+                    }
+                })
+            }
+        })
+        break;
+
+        case '1' || '2':
+        new_url = url + '?type=edit';
         $.ajax({
             url: new_url,
             type: 'GET',
             data: {id: data, act: act},
             success: function (res) {
                 res = JSON.parse(res);
-                console.log(res)
-                if (act === 'del') {
-                    deleteUser(res)
-                } else {
-                    editStatusUsers(res)
-                }
+                editStatusUsers(res)
             }
         })
+        break;
+    }
 })
 
+function modalConfirm (callback){
+
+        $('#alert').modal('show');
+        $('#alert .modal-footer').html('<button type="button" class="btn btn-default" id="modal-btn-yes">I\'m agree</button>' +
+                                    '<button type="button" class="btn btn-primary" id="modal-btn-no">No</button>')
+        $('#alert .modal-body').html('Are you agree?')
+
+
+    $('#modal-btn-yes').click(function () {
+        callback(true);
+    })
+
+    $('#modal-btn-no').click(function () {
+        callback(false);
+        $('#alert').modal('hide');
+    })
+}
 
 
 function addUser(res) {
@@ -167,6 +190,8 @@ function editUser(res) {
         role = res.user.role;
 
     el.find('.role').text(role)
+    el.find('.edit').attr('data-namefirst',name_first)
+    el.find('.edit').attr('data-namelast',name_last)
     el.find('.name').text(name_first+"\n"+name_last)
     el.find('.status').attr('class', 'status fa fa-circle '+status)
 

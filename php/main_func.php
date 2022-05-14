@@ -8,11 +8,11 @@ class User{
     private $rules = [
         'name_first' => [
             'required' => 1,
-            'field_name' => "Ім'я"
+            'field_name' => "First name"
         ],
         'name_last' => [
             'required' => 1,
-            'field_name' => 'Прізвище'
+            'field_name' => 'Last name'
         ]
     ];
     private $attrs = [
@@ -117,7 +117,7 @@ class User{
         foreach ($this->attrs as $name => $value){
             if (!array_key_exists($name, $this->rules)) continue;
             if ($this->rules[$name]['required'] && empty($this->attrs[$name])){
-                $error .= "<li>Поле {$this->rules[$name]['field_name']} не може бути пустим!</li>";
+                $error .= "<li>The \"{$this->rules[$name]['field_name']}\" field cannot be empty!</li>";
             }
         }
 
