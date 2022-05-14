@@ -62,7 +62,7 @@ require_once 'php/main_func.php';
                       </thead>
                       <tbody>
                       <?php foreach ($users as $user): ?>
-                          <tr>
+                          <tr id="tr-<?=$user['id']?>">
                               <td class="align-middle">
                                   <div
                                           class="custom-control custom-control-inline custom-checkbox custom-control-nameless m-0 align-top">
@@ -70,12 +70,12 @@ require_once 'php/main_func.php';
                                       <label class="custom-control-label" for="item-<?=$user['id']?>"></label>
                                   </div>
                               </td>
-                              <td class="text-nowrap align-middle"><?=$user['first_name'] . PHP_EOL . $user['last_name']?></td>
-                              <td class="text-nowrap align-middle"><span><?=$user['role']?></span></td>
-                              <td class="text-center align-middle"><i class="fa fa-circle <?= $user['status'] ? 'active-circle' :  'not-active-circle'?>"></i></td>
+                              <td class="text-nowrap align-middle name"><?=$user['name_first'] . PHP_EOL . $user['name_last']?></td>
+                              <td class="text-nowrap align-middle"><span class="role"><?=$user['role']?></span></td>
+                              <td class="text-center align-middle"><i class="status fa fa-circle <?= $user['status'] ? 'active-circle' :  'not-active-circle'?>"></i></td>
                               <td class="text-center align-middle">
                                   <div class="btn-group align-top">
-                                      <button class="btn btn-sm btn-outline-secondary badge edit" type="button" data-toggle="modal" data-target="#add-edit" data-whatever="Edit" data-id="<?=$user['id']?>" data-firstname="<?=$user['first_name']?>" data-lastname="<?=$user['last_name']?>">Edit</button>
+                                      <button class="btn btn-sm btn-outline-secondary badge edit" type="button" data-toggle="modal" data-target="#add-edit" data-whatever="Edit" data-id="<?=$user['id']?>" data-namefirst="<?=$user['name_first']?>" data-namelast="<?=$user['name_last']?>">Edit</button>
                                       <button class="btn btn-sm btn-outline-secondary badge delete" type="button" data-id="<?=$user['id']?>"><i
                                                   class="fa fa-trash"></i></button>
                                   </div>
@@ -124,16 +124,16 @@ require_once 'php/main_func.php';
                               <div class="row">
                                   <div class="col">
                                       <div class="form-group">
-                                          <label for="firstname">First Name</label>
-                                          <input class="form-control" id="firstname" type="text" name="first_name" value="">
+                                          <label for="name_first">First Name</label>
+                                          <input class="form-control" id="name_first" type="text" name="name_first" value="">
                                       </div>
                                   </div>
                               </div>
                               <div class="row">
                                   <div class="col">
                                       <div class="form-group">
-                                          <label for="lastname">Last name</label>
-                                          <input class="form-control" id="lastname" type="text" name="last_name" value="">
+                                          <label for="name_last">Last name</label>
+                                          <input class="form-control" id="name_last" type="text" name="name_last" value="">
                                       </div>
                                   </div>
                               </div>

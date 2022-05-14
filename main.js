@@ -21,15 +21,15 @@ $('#add-edit').on('show.bs.modal', function (event) {
     let modal = $(this)
     if (recipient === 'Add'){
         modal.find('.submit').removeAttr('value');
-        modal.find('#firstname').val('');
-        modal.find('#lastname').val('');
+        modal.find('#name_first').val('');
+        modal.find('#name_last').val('');
     }
     if (recipient === 'Edit'){
         let id = button.data('id'),
-            firstname = button.data('firstname'),
-            lastname = button.data('lastname');
-        modal.find('#firstname').val(firstname);
-        modal.find('#lastname').val(lastname);
+            name_first = button.data('namefirst'),
+            name_last = button.data('namelast');
+        modal.find('#name_first').val(name_first);
+        modal.find('#name_last').val(name_last);
         modal.find('.submit').attr('value',() => id);
     }
     modal.find('.modal-title').text(recipient + ' user')
@@ -50,11 +50,23 @@ $('#add-edit button:submit').click(function (e) {
         url: new_url,
         type: 'POST',
         data: $('.form').serialize(),
-        beforeSuccess: $('tbody').fadeOut(300),
         success: function (res) {
-            $('tbody').html(res).fadeIn(300)
+            res = JSON.parse(res)
+            console.log(res)
+            if (res.error !== null){
+                $('.modal').modal('hide')
+                $('#alert').modal('show');
+                $('#alert .modal-body').html(res.error.message);
+                return false;
+            }
+            if (id){
+                editUser(res)
+            } else {
+                addUser(res)
+                $('#all-items').prop('checked', false)
+            }
             $('.modal').modal('hide')
-            $('#all-items').prop('checked', false)
+
         }
     })
 })
@@ -73,10 +85,10 @@ $('body').on('click', '.delete',function () {
         url: url + '?type=del',
         type: 'GET',
         data: {id: id},
-        beforeSuccess: $('tbody').fadeOut(300),
         success: function (res) {
-            $('tbody').html(res).fadeIn(300)
-            $('#all-items').prop('checked', false)
+            res = JSON.parse(res)
+            console.log(res)
+            deleteUser(res)
         }
     })
 })
@@ -89,25 +101,25 @@ $('body').on('click', '.ok-button',function () {
         checked.each(function () {
             data += this.value + ',';
         })
-    let res = $(this).parents('.col-sm-4').find('option').filter(':selected').val()
+    let act = $(this).parents('.col-sm-4').find('option').filter(':selected').val()
     if (!data){
         $('#alert').modal('show');
         $('#alert .modal-body').text('Не вибрані юзери!');
         return false;
     }
-    if (res === 'default'){
+    if (act === 'default'){
         $('#alert').modal('show');
         $('#alert .modal-body').text('Треба вибрати один із варіантів!');
         return false;
     }
-    if (res === 'del'){
+    if (act === 'del'){
         let agree = confirm('Are you sure?');
         if (!agree) return false;
     }
 
     data = data.slice(0,-1);
     let new_url = '';
-    if (res === 'del') {
+    if (act === 'del') {
         new_url = url + '?type=del';
     } else {
         new_url = url + '?type=edit';
@@ -116,11 +128,61 @@ $('body').on('click', '.ok-button',function () {
         $.ajax({
             url: new_url,
             type: 'GET',
-            data: {id: data, res: res},
-            beforeSuccess: $('tbody').fadeOut(300),
+            data: {id: data, act: act},
             success: function (res) {
-                $('tbody').html(res).fadeIn(300)
-                $('#all-items').prop('checked', false)
+                res = JSON.parse(res);
+                console.log(res)
+                if (act === 'del') {
+                    deleteUser(res)
+                } else {
+                    editStatusUsers(res)
+                }
             }
         })
 })
+
+
+
+function addUser(res) {
+    const
+        id = res.user.id,
+
+        status = res.user['status'] !== '0' ? 'active-circle' : 'not-active-circle',
+        name_first = res.user['name_first'],
+        name_last = res.user['name_last'],
+        role = res.user.role;
+
+   const el = "<tr id=\"tr-"+id+"\"><td class=\"align-middle\"><div class=\"custom-control custom-control-inline custom-checkbox custom-control-nameless m-0 align-top\"><input type=\"checkbox\" class=\"custom-control-input\" id=\"item-"+id+"\" value=\""+id+"\"><label class=\"custom-control-label\" for=\"item-"+id+"\"></label></div></td><td class=\"text-nowrap align-middle name\">"+name_first+"\n"+name_last+"</td><td class=\"text-nowrap align-middle\"><span class=\"role\">"+role+"</span></td><td class=\"text-center align-middle\"><i class=\"status fa fa-circle "+status+"\"></i></td><td class=\"text-center align-middle\"><div class=\"btn-group align-top\"><button class=\"btn btn-sm btn-outline-secondary badge edit\" type=\"button\" data-toggle=\"modal\" data-target=\"#add-edit\" data-whatever=\"Edit\" data-id=\""+id+"\" data-namefirst=\""+name_first+"\" data-namelast=\""+name_last+"\">Edit</button><button class=\"btn btn-sm btn-outline-secondary badge delete\" type=\"button\" data-id=\""+id+"\"><i class=\"fa fa-trash\"></i></button></div></td></tr>"
+
+        $('tbody').append(el);
+}
+
+function editUser(res) {
+    const
+        id = res.user.id,
+        el = $('tr[id=tr-'+id+']'),
+        status = res.user['status'] !== '0' ? 'active-circle' : 'not-active-circle',
+        name_first = res.user['name_first'],
+        name_last = res.user['name_last'],
+        role = res.user.role;
+
+    el.find('.role').text(role)
+    el.find('.name').text(name_first+"\n"+name_last)
+    el.find('.status').attr('class', 'status fa fa-circle '+status)
+
+}
+
+function editStatusUsers(res){
+    const id = res.user['id'],
+        status = res.user['status'] !== '0' ? 'active-circle' : 'not-active-circle';
+    for (const value of id){
+        $('tr[id=tr-'+value+']').find('.status').attr('class', 'status fa fa-circle '+status);
+    }
+}
+
+function deleteUser(res) {
+    const id = res['id'];
+    for (const value of id){
+        $('tr[id=tr-'+value+']').remove()
+    }
+}
