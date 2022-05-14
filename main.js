@@ -103,6 +103,7 @@ $('body').on('click', '.ok-button',function () {
     if (!data){
         $('#alert').modal('show');
         $('#alert .modal-body').text('Not selected users!');
+        $('#alert .modal-footer').html('<button type="button" class="btn btn-sm" data-dismiss="modal">Close</button>')
         return false;
     }
     data = data.slice(0,-1);
@@ -112,6 +113,7 @@ $('body').on('click', '.ok-button',function () {
         case 'default':
         $('#alert').modal('show');
         $('#alert .modal-body').text('Choose an action!');
+        $('#alert .modal-footer').html('<button type="button" class="btn btn-sm" data-dismiss="modal">Close</button>')
         return false;
 
         case 'del':
