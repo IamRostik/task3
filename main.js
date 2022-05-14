@@ -31,6 +31,7 @@ $('#add-edit').on('show.bs.modal', function (event) {
             name_last = button.attr('data-namelast'),
             status = button.attr('data-status'),
             role = button.attr('data-role');
+        console.log(status)
         modal.find('#name_first').val(name_first);
         modal.find('#name_last').val(name_last);
         if (status === '1') modal.find('input[name=status]').prop('checked', true);
@@ -114,6 +115,7 @@ $('body').on('click', '.ok-button',function () {
     }
     data = data.slice(0,-1);
     let new_url = '';
+    console.log(act)
     switch (act){
 
         case 'default':
@@ -147,6 +149,7 @@ $('body').on('click', '.ok-button',function () {
             type: 'GET',
             data: {id: data, act: act},
             success: function (res) {
+                console.log(res)
                 res = JSON.parse(res);
                 editStatusUsers(res)
             }
@@ -212,10 +215,10 @@ function editStatusUsers(res){
         status = res.user['status'] !== '0' ? 'active-circle' : 'not-active-circle';
     for (const value of id){
         $('tr[id=tr-'+value+']').find('.status').attr('class', 'status fa fa-circle '+status);
+        $('tr[id=tr-'+value+']').find('.edit').attr('data-status',res.user['status'])
     }
+
     $('.table input:checked').prop('checked', false);
-
-
 }
 
 function deleteUser(res) {
