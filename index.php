@@ -75,7 +75,7 @@ require_once 'php/main_func.php';
                               <td class="text-center align-middle"><i class="status fa fa-circle <?= $user['status'] ? 'active-circle' :  'not-active-circle'?>"></i></td>
                               <td class="text-center align-middle">
                                   <div class="btn-group align-top">
-                                      <button class="btn btn-sm btn-outline-secondary badge edit" type="button" data-toggle="modal" data-target="#add-edit" data-whatever="Edit" data-id="<?=$user['id']?>" data-namefirst="<?=htmlspecialchars($user['name_first'])?>" data-namelast="<?=htmlspecialchars($user['name_last'])?>">Edit</button>
+                                      <button class="btn btn-sm btn-outline-secondary badge edit" type="button" data-toggle="modal" data-target="#add-edit" data-whatever="Edit" data-id="<?=$user['id']?>" data-namefirst="<?=htmlspecialchars($user['name_first'])?>" data-namelast="<?=htmlspecialchars($user['name_last'])?>" data-role="<?=$user['role']?>" data-status="<?=$user['status']?>"">Edit</button>
                                       <button class="btn btn-sm btn-outline-secondary badge delete" type="button" data-id="<?=$user['id']?>"><i
                                                   class="fa fa-trash"></i></button>
                                   </div>

@@ -16,20 +16,26 @@ $('body').on('click','.align-middle input:checkbox',function () {
 // Додавання та редагування юзерів
 
 $('#add-edit').on('show.bs.modal', function (event) {
-    let button = $(event.relatedTarget), // Button that triggered the modal
+    const button = $(event.relatedTarget), // Button that triggered the modal
         recipient = button.data('whatever'); // Extract info from data-* attributes
-    let modal = $(this)
+    const modal = $(this)
     if (recipient === 'Add'){
         modal.find('.submit').removeAttr('value');
         modal.find('#name_first').val('');
         modal.find('#name_last').val('');
     }
     if (recipient === 'Edit'){
-        let id = button.data('id'),
+        const
+            id = button.data('id'),
             name_first = button.attr('data-namefirst'),
-            name_last = button.attr('data-namelast');
+            name_last = button.attr('data-namelast'),
+            status = button.attr('data-status'),
+            role = button.attr('data-role');
         modal.find('#name_first').val(name_first);
         modal.find('#name_last').val(name_last);
+        if (status === '1') modal.find('input[name=status]').prop('checked', true);
+        if (status === '0') modal.find('input[name=status]').prop('checked', false);
+        modal.find('option[value='+role+']').prop('selected',true);
         modal.find('.submit').attr('value',() => id);
     }
     modal.find('.modal-title').text(recipient + ' user')
@@ -108,6 +114,7 @@ $('body').on('click', '.ok-button',function () {
     }
     data = data.slice(0,-1);
     let new_url = '';
+    console.log(act)
     switch (act){
 
         case 'default':
@@ -134,7 +141,7 @@ $('body').on('click', '.ok-button',function () {
         })
         break;
 
-        case '0' || '1':
+        default:
         new_url = url + '?type=edit';
         $.ajax({
             url: new_url,
@@ -193,10 +200,12 @@ function editUser(res) {
         role = res.user.role;
 
     el.find('.role').text(role)
-    el.find('.edit').attr('data-namefirst',name_first)
-    el.find('.edit').attr('data-namelast',name_last)
     el.find('.name').text(name_first+"\n"+name_last)
     el.find('.status').attr('class', 'status fa fa-circle '+status)
+    el.find('.edit').attr('data-namefirst',name_first)
+    el.find('.edit').attr('data-namelast',name_last)
+    el.find('.edit').attr('data-status',res.user['status'])
+    el.find('.edit').attr('data-role',role)
 
 }
 
