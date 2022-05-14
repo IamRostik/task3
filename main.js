@@ -134,13 +134,14 @@ $('body').on('click', '.ok-button',function () {
         })
         break;
 
-        case '1' || '2':
+        case '0' || '1':
         new_url = url + '?type=edit';
         $.ajax({
             url: new_url,
             type: 'GET',
             data: {id: data, act: act},
             success: function (res) {
+                console.log(res)
                 res = JSON.parse(res);
                 editStatusUsers(res)
             }
@@ -202,9 +203,11 @@ function editUser(res) {
 function editStatusUsers(res){
     const id = res.user['id'],
         status = res.user['status'] !== '0' ? 'active-circle' : 'not-active-circle';
+    console.log(status)
     for (const value of id){
         $('tr[id=tr-'+value+']').find('.status').attr('class', 'status fa fa-circle '+status);
     }
+
 }
 
 function deleteUser(res) {
