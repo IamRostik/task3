@@ -1,5 +1,5 @@
 <?php
-namespace php;
+
 require_once 'php/functions.php';
 class User{
 
