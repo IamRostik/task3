@@ -114,7 +114,6 @@ $('body').on('click', '.ok-button',function () {
     }
     data = data.slice(0,-1);
     let new_url = '';
-    console.log(act)
     switch (act){
 
         case 'default':
@@ -148,7 +147,6 @@ $('body').on('click', '.ok-button',function () {
             type: 'GET',
             data: {id: data, act: act},
             success: function (res) {
-                console.log(res)
                 res = JSON.parse(res);
                 editStatusUsers(res)
             }
@@ -212,10 +210,11 @@ function editUser(res) {
 function editStatusUsers(res){
     const id = res.user['id'],
         status = res.user['status'] !== '0' ? 'active-circle' : 'not-active-circle';
-    console.log(status)
     for (const value of id){
         $('tr[id=tr-'+value+']').find('.status').attr('class', 'status fa fa-circle '+status);
     }
+    $('.table input:checked').prop('checked', false);
+
 
 }
 
