@@ -98,7 +98,7 @@ class User{
 
     private function loadAttrs($array) {
         foreach ($array as $name => $value){
-            $value = str_replace(' ','', $value);
+            $value = preg_replace("%\s%", '', $value);
             $this->attrs[$name] = $value;
         }
         $this->attrs['status'] = isset($array['status']) && !empty($array['status']) ? '1' : '0';
