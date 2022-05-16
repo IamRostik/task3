@@ -61,6 +61,7 @@ $('#add-edit button:submit').click(function (e) {
                 $('.modal').modal('hide')
                 $('#alert').modal('show');
                 $('#alert .modal-body').html(res.error.message);
+                $('#alert .modal-footer').html('<button type="button" class="btn btn-sm" data-dismiss="modal">Close</button>')
                 return false;
             }
             if (id){
