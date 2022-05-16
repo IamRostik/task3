@@ -159,16 +159,16 @@ $('body').on('click', '.ok-button',function () {
 function modalConfirm (callback,id = null){
 
         $('#alert').modal('show');
-        $('#alert .modal-footer').html('<button type="button" class="btn btn-default" id="modal-btn-yes">I\'m agree</button>' +
+        $('#alert .modal-footer').html('<button type="button" class="btn btn-default" id="modal-btn-yes">Yes</button>' +
                                     '<button type="button" class="btn btn-primary" id="modal-btn-no">No</button>')
     if (id !== null){
         const
             el = $('tr[id=tr-'+id+']').find('.edit'),
             name_first = el.attr('data-namefirst'),
             name_last = el.attr('data-namelast');
-        $('#alert .modal-body').html('Are you agree to delete '+name_first+'\n'+name_last+'?')
+        $('#alert .modal-body').html('Are you sure you want to delete '+name_first+'\n'+name_last+'?')
     } else {
-        $('#alert .modal-body').html('Are you agree?')
+        $('#alert .modal-body').html('Are you sure?')
     }
 
 
