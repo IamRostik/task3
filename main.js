@@ -81,10 +81,7 @@ $('#add-edit button:submit').click(function (e) {
 
 // Кнопка видалення юзерів
 $('body').on('click', '.delete',function () {
-    const id = $(this).data('id'),
-        el = $('tr[id=tr-'+id+'] #edit'),
-        name_first = el.attr('data-namefirst'),
-        name_last = el.attr('data-namelast');
+    const id = $(this).data('id');
         modalConfirm(function (bool) {
             if (bool){
                 $.ajax({
