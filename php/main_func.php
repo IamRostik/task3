@@ -1,6 +1,6 @@
 <?php
 
-require_once 'php/functions.php';
+include_once 'functions.php';
 class User{
 
     private $pdo;
@@ -28,18 +28,35 @@ class User{
 
     public function __construct()
     {
-        $this->pdo = require_once 'php/connect_db.php';
+        $this->pdo = include_once 'connect_db.php';
 
     }
 
-    public function showUsers(){
+    public function getUsers(){
         $res = $this->pdo->query("SELECT * FROM `user` ORDER BY id");
         $users = $res->fetchAll();
         return $users;
     }
 
+    public function getOneUser(){
+        if (isset($_GET['type']) && isset($_POST) && $_GET['type'] == 'get_user'){
+        $id = $_POST['id'];
+        $res = $this->pdo->prepare("SELECT * FROM `user` WHERE id = ?");
+        try {
+            $res->execute([$id]);
+            $this->loadAttrs($res->fetch());
+            $this->loadResponse($id);
+        } catch (\PDOException |\Exception $e){
+            $this->response['error']['message'] = $e->getMessage();
+            $this->response['error']['code'] = $e->getCode();
+        }
+        echo json_encode($this->response);
+        die();
+        }
+    }
+
     public function addUser(){
-        if (isset($_GET['type']) && isset($_POST) && $_GET['type'] == 'add' ){
+        if (isset($_GET['type']) && isset($_POST) && $_GET['type'] == 'add'){
             $this->loadAttrs($_POST);
             $res = $this->pdo->prepare("INSERT INTO `user`(name_first, name_last, status, role) VALUES (?, ?, ?, ?)");
             try {
@@ -58,10 +75,10 @@ class User{
     }
 
     public function editUser(){
-        if (isset($_GET['type']) && !empty($_POST) && $_GET['type'] == 'edit'){
+        if (isset($_GET['type']) && !empty($_POST) && $_GET['type'] == 'edit_one'){
+            $id = $_GET['id'];
             $this->loadAttrs($_POST);
             $res = $this->pdo->prepare("UPDATE `user` SET name_first = ?, name_last = ?, status = ?, role = ? WHERE id = ?");
-            $id = $_GET['id'];
             try {
                 $this->validate();
                 $res->execute([$this->attrs['name_first'], $this->attrs['name_last'], $this->attrs['status'], $this->attrs['role'], $id]);
@@ -74,19 +91,20 @@ class User{
             die();
         }
 
-        if (isset($_GET['type']) && empty($_POST) && $_GET['type'] == 'edit'){
-            $ids = explode(',',$_GET['id']);
+        if (isset($_GET['type']) && !empty($_POST) && $_GET['type'] == 'edit_some'){
+            $ids = explode(',',$_POST['id']);
             $res = $this->pdo->prepare("UPDATE `user` SET status = ? WHERE id = ?");
-            foreach ($ids as $id) $res->execute([$_GET['act'], $id]);
-            list($this->response['status'], $this->response['user']['id'], $this->response['user']['status']) = [true, $ids, $_GET['act']];
+            foreach ($ids as $id) $res->execute([$_POST['act'], $id]);
+            list($this->response['status'], $this->response['user']['id'], $this->response['user']['status']) = [true, $ids, $_POST['act']];
             echo json_encode($this->response);
             die();
         }
     }
 
     public function deleteUser(){
-        if (isset($_GET['type']) && $_GET['type'] == 'del'){
-            $ids = explode(',',$_GET['id']);
+        if (isset($_GET['type']) && $_GET['type'] == 'del' && !empty($_POST)){
+
+            $ids = explode(',',$_POST['id']);
             $res = $this->pdo->prepare("DELETE FROM `user` WHERE id = ?");
             foreach ($ids as $id) $res->execute([$id]);
             $this->response['status'] = true;
@@ -127,10 +145,11 @@ class User{
 
 }
 $user = new User();
+$user->getOneUser();
 $user->editUser();
 $user->addUser();
 $user->deleteUser();
-$users = $user->showUsers();
+$users = $user->getUsers();
 
 
 

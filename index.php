@@ -1,5 +1,5 @@
 <?php
-require_once 'php/main_func.php';
+
 ?>
 
 <!DOCTYPE html>
@@ -61,7 +61,7 @@ require_once 'php/main_func.php';
                         </tr>
                       </thead>
                       <tbody>
-                      <?php foreach ($users as $user): ?>
+                      <?php include_once 'php/main_func.php'; foreach ($users as $user): ?>
                           <tr id="tr-<?=$user['id']?>">
                               <td class="align-middle">
                                   <div
@@ -72,10 +72,10 @@ require_once 'php/main_func.php';
                               </td>
                               <td class="text-nowrap align-middle name"><?=htmlspecialchars($user['name_first']) . PHP_EOL . htmlspecialchars($user['name_last'])?></td>
                               <td class="text-nowrap align-middle"><span class="role"><?=htmlspecialchars($user['role'])?></span></td>
-                              <td class="text-center align-middle"><i class="status fa fa-circle <?= $user['status'] ? 'active-circle' :  'not-active-circle'?>"></i></td>
+                              <td class="text-center align-middle"><i class="status fa fa-circle not-active-circle <?= $user['status'] ? 'active-circle' :  ''?>"></i></td>
                               <td class="text-center align-middle">
                                   <div class="btn-group align-top">
-                                      <button class="btn btn-sm btn-outline-secondary badge edit" type="button" data-toggle="modal" data-target="#add-edit" data-whatever="Edit" data-id="<?=$user['id']?>" data-namefirst="<?=htmlspecialchars($user['name_first'])?>" data-namelast="<?=htmlspecialchars($user['name_last'])?>" data-role="<?=$user['role']?>" data-status="<?=$user['status']?>"">Edit</button>
+                                      <button class="btn btn-sm btn-outline-secondary badge edit" type="button" data-toggle="modal" data-target="#add-edit" data-whatever="Edit" data-id="<?=$user['id']?>">Edit</button>
                                       <button class="btn btn-sm btn-outline-secondary badge delete" type="button" data-id="<?=$user['id']?>"><i
                                                   class="fa fa-trash"></i></button>
                                   </div>
@@ -140,13 +140,13 @@ require_once 'php/main_func.php';
                               <div class="row mt-2">
                                   <div class="col">
                                       <div class="custom-control custom-switch">
-                                          <input type="checkbox" class="custom-control-input" id="customSwitch1" name="status">
-                                          <label class="custom-control-label" for="customSwitch1">Choose user's status</label>
+                                          <input type="checkbox" class="custom-control-input" id="change-status" name="status">
+                                          <label class="custom-control-label" for="change-status">Choose user's status</label>
                                       </div>
                                   </div>
                                   <div class="col">
                                       <select name="role" id="role" class="form-control">
-                                          <option value="user">User</option>
+                                          <option value="user" id="default-role">User</option>
                                           <option value="admin">Admin</option>
                                       </select>
                                   </div>
@@ -169,6 +169,19 @@ require_once 'php/main_func.php';
                       </div>
                       <div class="modal-footer py-1">
                           <button type="button" class="btn btn-sm" data-dismiss="modal">Close</button>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          <div class="modal fade" id="confirm" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                      <div class="modal-body">
+
+                      </div>
+                      <div class="modal-footer py-1">
+                          <button type="button" class="btn btn-default" id="modal-btn-yes">Yes</button>
+                          <button type="button" class="btn btn-primary" id="modal-btn-no">No</button>
                       </div>
                   </div>
               </div>
