@@ -46,7 +46,7 @@ class main_func{
     }
 
     /**
-     * Визивається через Ajax.
+     * Викликається через Ajax.
      * Виконує пошук юзера по id та вертає у відповіді json об'єкт
      */
     public function getOneUser(){
@@ -67,7 +67,7 @@ class main_func{
     }
 
     /**
-     * Визивається через Ajax.
+     * Викликається через Ajax.
      * Додає нового юзера в таблицю user та вертає у відповіді json об'єкт
      */
     public function addUser(){
@@ -90,7 +90,7 @@ class main_func{
     }
 
     /**
-     * Визивається через Ajax.
+     * Викликається через Ajax.
      * Виконує редагування юзера в таблиці user та вертає у відповіді json об'єкт
      */
     public function editUser(){
@@ -112,7 +112,7 @@ class main_func{
     }
 
     /**
-     * Визивається через Ajax.
+     * Викликається через Ajax.
      * Виконує редагування поля status юзера/юзерів в таблиці user та вертає у відповіді json об'єкт
      */
     public function editStatusUsers(){
@@ -127,7 +127,7 @@ class main_func{
     }
 
     /**
-     * Визивається через Ajax.
+     * Викликається через Ajax.
      * Видаляє юзера з таблиці user та вертає у відповіді json об'єкт
      */
     public function deleteUser(){
@@ -143,7 +143,7 @@ class main_func{
     }
 
     /**
-     * Заповнює property $this->attrs даними, отримані параметром $array.
+     * Заповнює property $this->attrs даними, отриманими параметром $array.
      * @param array $array - массив з данними юзера, переданий з форми методом post
      */
     private function loadAttrs($array) {
