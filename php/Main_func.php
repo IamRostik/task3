@@ -155,7 +155,7 @@ class Main_func{
     }
 
     /**
-     * Заповнює property $this->response отвалідованими даними, які відправляються у відповіді ajax.
+     * Заповнює property $this->response отвалідованими даними, які потім відправляються у відповіді ajax.
      * @param $id - id юзера.
      */
     private function loadResponse($id){
