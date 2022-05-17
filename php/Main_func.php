@@ -1,7 +1,8 @@
 <?php
 
 include_once 'functions.php';
-class User{
+include_once 'Router.php';
+class Main_func{
 
     private $pdo;
 
@@ -26,18 +27,28 @@ class User{
         'error' => null,
     ];
 
+    /**
+     * Підключення бази данних
+     */
     public function __construct()
     {
         $this->pdo = include_once 'connect_db.php';
 
     }
 
+    /**
+     * Виконує пошук всіх юзерів з таблиці user
+     * @return mixed
+     */
     public function getUsers(){
         $res = $this->pdo->query("SELECT * FROM `user` ORDER BY id");
-        $users = $res->fetchAll();
-        return $users;
+        return $res->fetchAll();
     }
 
+    /**
+     * Визивається через Ajax.
+     * Виконує пошук юзера по id та вертає у відповіді json об'єкт
+     */
     public function getOneUser(){
         if (isset($_GET['type']) && isset($_POST) && $_GET['type'] == 'get_user'){
         $id = $_POST['id'];
@@ -55,6 +66,10 @@ class User{
         }
     }
 
+    /**
+     * Визивається через Ajax.
+     * Додає нового юзера в таблицю user та вертає у відповіді json об'єкт
+     */
     public function addUser(){
         if (isset($_GET['type']) && isset($_POST) && $_GET['type'] == 'add'){
             $this->loadAttrs($_POST);
@@ -74,6 +89,10 @@ class User{
         }
     }
 
+    /**
+     * Визивається через Ajax.
+     * Виконує редагування юзера в таблиці user та вертає у відповіді json об'єкт
+     */
     public function editUser(){
         if (isset($_GET['type']) && !empty($_POST) && $_GET['type'] == 'edit_one'){
             $id = $_GET['id'];
@@ -90,7 +109,13 @@ class User{
             echo json_encode($this->response);
             die();
         }
+    }
 
+    /**
+     * Визивається через Ajax.
+     * Виконує редагування поля status юзера/юзерів в таблиці user та вертає у відповіді json об'єкт
+     */
+    public function editStatusUsers(){
         if (isset($_GET['type']) && !empty($_POST) && $_GET['type'] == 'edit_some'){
             $ids = explode(',',$_POST['id']);
             $res = $this->pdo->prepare("UPDATE `user` SET status = ? WHERE id = ?");
@@ -101,9 +126,12 @@ class User{
         }
     }
 
+    /**
+     * Визивається через Ajax.
+     * Видаляє юзера з таблиці user та вертає у відповіді json об'єкт
+     */
     public function deleteUser(){
         if (isset($_GET['type']) && $_GET['type'] == 'del' && !empty($_POST)){
-
             $ids = explode(',',$_POST['id']);
             $res = $this->pdo->prepare("DELETE FROM `user` WHERE id = ?");
             foreach ($ids as $id) $res->execute([$id]);
@@ -114,6 +142,10 @@ class User{
         }
     }
 
+    /**
+     * Заповнює property $this->attrs даними, отримані параметром $array.
+     * @param array $array - массив з данними юзера, переданий з форми методом post
+     */
     private function loadAttrs($array) {
         foreach ($array as $name => $value){
             $value = preg_replace("%\s%", '', $value);
@@ -122,6 +154,10 @@ class User{
         $this->attrs['status'] = isset($array['status']) && !empty($array['status']) ? '1' : '0';
     }
 
+    /**
+     * Заповнює property $this->response отвалідованими даними, які відправляються у відповіді ajax.
+     * @param $id - id юзера.
+     */
     private function loadResponse($id){
         $this->response['status'] = true;
         $this->response['user']['id'] = $id;
@@ -130,6 +166,10 @@ class User{
         }
     }
 
+    /**
+     * Валідує дані.
+     * @throws Exception
+     */
     private function validate(){
         $error = null;
         foreach ($this->attrs as $name => $value){
@@ -142,14 +182,5 @@ class User{
         if ($error) throw new \Exception($error,100);
     }
 
-
 }
-$user = new User();
-$user->getOneUser();
-$user->editUser();
-$user->addUser();
-$user->deleteUser();
-$users = $user->getUsers();
-
-
-
+return \php\Router::dispatch($_SERVER['PHP_SELF']);

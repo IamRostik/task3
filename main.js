@@ -22,13 +22,12 @@ $('#add-edit').on('show.bs.modal', function (event) {
     if (recipient === 'Add'){
         $('.submit').val('');
         $('.form').trigger('reset');
-        $('#default-role').prop('selected',true);
     }
     if (recipient === 'Edit'){
         const
             id = button.data('id');
             $.ajax({
-            url: url_func + '?type=get_user',
+            url: url_func + '/get_one_user?type=get_user',
             type: 'POST',
             data: {id: id},
             dataType: 'json',
@@ -51,9 +50,9 @@ $('#add-edit button:submit').click(function (e) {
     let id = $(this).val(),
         new_url = ''
     if (id) {
-        new_url = url_func + '?type=edit_one&id='+id;
+        new_url = url_func + '/edit_user?type=edit_one&id='+id;
     } else {
-        new_url = url_func + '?type=add';
+        new_url = url_func + '/add_user?type=add';
     }
     $.ajax({
         url: new_url,
@@ -62,10 +61,9 @@ $('#add-edit button:submit').click(function (e) {
         dataType: 'json',
         success: function (res) {
             if (res.error !== null){
-                $('.modal').modal('hide')
+                $('#add-edit').modal('hide')
                 $('#alert').modal('show');
                 $('#alert .modal-body').html(res.error.message);
-                $('#alert .modal-footer').html('<button type="button" class="btn btn-sm" data-dismiss="modal">Close</button>')
                 return false;
             }
             if (id){
@@ -80,21 +78,17 @@ $('#add-edit button:submit').click(function (e) {
     })
 })
 
-
-
-
 // Кнопка видалення юзерів
 $('body').on('click', '.delete',function () {
     const id = $(this).data('id');
         modalConfirm(function (bool) {
             if (bool){
                 $.ajax({
-                    url: url_func + '?type=del',
+                    url: url_func + '/delete_user?type=del',
                     type: 'POST',
                     data: {id: id},
                     dataType: 'json',
                     success: function (res) {
-                        console.log(res)
                         deleteUser(res)
                         $('#confirm').modal('hide');
                     }
@@ -128,7 +122,7 @@ $('body').on('click', '.ok-button',function () {
         return false;
 
         case 'del':
-        new_url = url_func + '?type=del';
+        new_url = url_func + '/delete_user?type=del';
         modalConfirm(function (bool) {
             if (bool){
                 $.ajax({
@@ -146,14 +140,13 @@ $('body').on('click', '.ok-button',function () {
         break;
 
         default:
-        new_url = url_func + '?type=edit_some';
+        new_url = url_func + '/edit_status_users?type=edit_some';
         $.ajax({
             url: new_url,
             type: 'POST',
             data: {id: data, act: act},
             dataType: 'json',
             success: function (res) {
-                console.log(res)
                 editStatusUsers(res)
             }
         })
@@ -166,7 +159,7 @@ function modalConfirm (callback,id = null){
         const name = $('tr[id=tr-'+id+']').find('.name').text();
         $('#confirm .modal-body').html('Are you sure you want to delete '+name+'?')
     } else {
-        $('#confirm .modal-body').html('Are you sure you want to delete these users?')
+        $('#confirm .modal-body').html('Are you sure you want to delete selected users?')
     }
 
     $('#confirm').modal('show');
@@ -185,7 +178,6 @@ function modalConfirm (callback,id = null){
 function addUser(res) {
     const
         id = res.user.id,
-
         status = res.user['status'] !== '0' ? 'active-circle' : '',
         name_first = res.user['name_first'],
         name_last = res.user['name_last'],
@@ -200,27 +192,22 @@ function editUser(res) {
     const
         id = res.user.id,
         el = $('tr[id=tr-'+id+']'),
-        status = res.user['status'] !== '0' ? 'active-circle' : 'not-active-circle',
+        status = res.user['status'] !== '0' ? 'active-circle' : '',
         name_first = res.user['name_first'],
         name_last = res.user['name_last'],
         role = res.user.role;
 
     el.find('.role').text(role)
     el.find('.name').text(name_first+"\n"+name_last)
-    el.find('.status').attr('class', 'status fa fa-circle '+status)
-    el.find('.edit').attr('data-namefirst',name_first)
-    el.find('.edit').attr('data-namelast',name_last)
-    el.find('.edit').attr('data-status',res.user['status'])
-    el.find('.edit').attr('data-role',role)
+    el.find('.status').removeClass('active-circle').addClass(status)
 
 }
 
 function editStatusUsers(res){
     const id = res.user['id'],
-        status = res.user['status'] !== '0' ? 'active-circle' : 'not-active-circle';
+        status = res.user['status'] !== '0' ? 'active-circle' : '';
     for (const value of id){
-        $('tr[id=tr-'+value+']').find('.status').attr('class', 'status fa fa-circle '+status);
-        $('tr[id=tr-'+value+']').find('.edit').attr('data-status',res.user['status'])
+        $('tr[id=tr-'+value+'] .status').removeClass('active-circle').addClass(status);
     }
 
     $('.table input:checked').prop('checked', false);
