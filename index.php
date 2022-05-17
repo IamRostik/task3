@@ -57,7 +57,7 @@
                         </tr>
                       </thead>
                       <tbody>
-                      <?php $users = include_once 'php/Main_func.php'; if (isset($users)):?>
+                      <?php $users = include_once 'php/main_func.php'; if (isset($users)):?>
                       <?php foreach ($users as $user): ?>
                           <tr id="tr-<?=$user['id']?>">
                               <td class="align-middle">

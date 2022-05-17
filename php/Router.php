@@ -1,9 +1,9 @@
 <?php
 
 namespace php;
-use Main_func;
+use main_func;
 
-require_once 'Main_func.php';
+require_once 'main_func.php';
 class Router
 {
 
@@ -14,7 +14,7 @@ class Router
      */
     public static function dispatch($url){
         $route = explode('/',trim($url, '/'));
-        $controller = Main_func::class;
+        $controller = main_func::class;
         if(class_exists($controller)){
             $controllerObj = new $controller();
             if (!isset($route[2])) {
