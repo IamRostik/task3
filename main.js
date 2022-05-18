@@ -62,8 +62,8 @@ $('#add-edit button:submit').click(function (e) {
         success: function (res) {
             if (res.error !== null){
                 $('#add-edit').modal('hide')
-                $('#alert').modal('show');
                 $('#alert .modal-body').html(res.error.message);
+                $('#alert').modal('show');
                 return false;
             }
             if (id){
@@ -156,7 +156,7 @@ $('body').on('click', '.ok-button',function () {
 
 function modalConfirm (callback,id = null){
     if (id !== null){
-        const name = $('tr[id=tr-'+id+']').find('.name').text();
+        const name = $('tr[id=tr-'+id+'] .name').text();
         $('#confirm .modal-body').html('Are you sure you want to delete '+name+'?')
     } else {
         $('#confirm .modal-body').html('Are you sure you want to delete selected users?')
