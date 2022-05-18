@@ -1,4 +1,4 @@
-let url_func = location.protocol + '//' + location.hostname + '/php/main_func.php';
+let url_func = location.protocol + '//' + location.hostname + '/php/MainFunc.php';
 // Груповий чекбокс
 $('#all-items').click(function () {
     const checkboxes = $(".align-middle input:checkbox");

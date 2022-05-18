@@ -1,9 +1,8 @@
 <?php
 
 namespace php;
-use main_func;
 
-require_once 'main_func.php';
+require_once 'MainFunc.php';
 class Router
 {
 
@@ -14,17 +13,15 @@ class Router
      */
     public static function dispatch($url){
         $route = explode('/',trim($url, '/'));
-        $controller = main_func::class;
+        if ($route[0] == 'index.php'){
+            $route[2] = 'get_users';
+        }
+        $controller = \MainFunc::class;
         if(class_exists($controller)){
             $controllerObj = new $controller();
-            if (!isset($route[2])) {
-                return $controllerObj->getUsers();
-            } else {
-                $action = self::toCamelCase($route[2]);
-            }
+            $action = lcfirst(self::toUpperCamelCase($route[2]));
             if (method_exists($controllerObj, $action)){
-            $controllerObj->$action();
-            return true;
+            return $controllerObj->$action();
             }
         }
         return false;
@@ -34,9 +31,8 @@ class Router
      * @param $str
      * @return string
      */
-    public static function toCamelCase($str){
-        $str = ucwords(str_replace(['-','_'],' ', $str));
-        $str = lcfirst(str_replace(' ','', $str));
+    public static function toUpperCamelCase($str){
+        $str = str_replace(' ','',ucwords(str_replace(['-','_'],' ', $str)));
         return $str;
     }
 

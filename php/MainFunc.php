@@ -2,7 +2,7 @@
 
 include_once 'functions.php';
 include_once 'Router.php';
-class main_func{
+class MainFunc{
 
     private $pdo;
 
