@@ -117,6 +117,7 @@
                           </button>
                       </div>
                       <div class="modal-body">
+                          <div class="alert alert-danger d-none" role="alert"></div>
                           <form class="form">
                               <div class="row">
                                   <div class="col">
@@ -134,18 +135,19 @@
                                       </div>
                                   </div>
                               </div>
-                              <div class="row mt-2">
+                              <div class="row">
                                   <div class="col">
-                                      <div class="custom-control custom-switch">
-                                          <input type="checkbox" class="custom-control-input" id="change-status" name="status">
-                                          <label class="custom-control-label" for="change-status">Choose user's status</label>
-                                      </div>
-                                  </div>
-                                  <div class="col">
+                                      <label for="role">Role</label>
                                       <select name="role" id="role" class="form-control">
                                           <option value="user" id="default-role">User</option>
                                           <option value="admin">Admin</option>
                                       </select>
+                                  </div>
+                                  <div class="col align-self-end">
+                                      <div class="custom-control custom-switch">
+                                          <input type="checkbox" class="custom-control-input" id="change-status" name="status">
+                                          <label class="custom-control-label" for="change-status">Choose user's status</label>
+                                      </div>
                                   </div>
                               </div>
                           </form>

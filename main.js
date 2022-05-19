@@ -19,6 +19,7 @@ $('#add-edit').on('show.bs.modal', function (event) {
     const button = $(event.relatedTarget), // Button that triggered the modal
         recipient = button.data('whatever'); // Extract info from data-* attributes
     const modal = $(this)
+    $('#add-edit .modal-body .alert-danger').removeClass('d-block');
     if (recipient === 'Add'){
         $('.submit').val('');
         $('.form').trigger('reset');
@@ -61,9 +62,7 @@ $('#add-edit button:submit').click(function (e) {
         dataType: 'json',
         success: function (res) {
             if (res.error !== null){
-                $('#add-edit').modal('hide')
-                $('#alert .modal-body').html(res.error.message);
-                $('#alert').modal('show');
+                $('#add-edit .modal-body .alert-danger').html(res.error.message).addClass('d-block');
                 return false;
             }
             if (id){
@@ -73,7 +72,6 @@ $('#add-edit button:submit').click(function (e) {
                 $('#all-items').prop('checked', false)
             }
             $('.modal').modal('hide')
-
         }
     })
 })
