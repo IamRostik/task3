@@ -1,4 +1,7 @@
 let url_func = location.protocol + '//' + location.hostname + '/php/MainFunc.php';
+
+showAll()
+
 // Груповий чекбокс
 $('#all-items').click(function () {
     const checkboxes = $(".align-middle input:checkbox");
@@ -21,7 +24,7 @@ $('#add-edit').on('show.bs.modal', function (event) {
     const modal = $(this)
     $('#add-edit .modal-body .alert-danger').removeClass('d-block');
     if (recipient === 'Add'){
-        $('.submit').val('');
+        $('.btn-submit').val('');
         $('.form').trigger('reset');
     }
     if (recipient === 'Edit'){
@@ -33,6 +36,10 @@ $('#add-edit').on('show.bs.modal', function (event) {
             data: {id: id},
             dataType: 'json',
             success: function (res) {
+                if (res.error !== null){
+                    $('#add-edit .modal-body .alert-danger').html(res.error.message).addClass('d-block');
+                    return false;
+                }
                 $('#add-edit #name_first').val(res.user['name_first']);
                 $('#add-edit #name_last').val(res.user['name_last']);
                 if (res.user['status'] === '1') $('#add-edit #change-status').prop('checked', true);
@@ -40,12 +47,12 @@ $('#add-edit').on('show.bs.modal', function (event) {
                 $('#add-edit option[value='+res.user['role']+']').prop('selected',true);
             }
         })
-        $('.submit').val(id);
+        $('.btn-submit').val(id);
     }
     modal.find('.modal-title').text(recipient + ' user')
 })
 
-$('#add-edit button:submit').click(function (e) {
+$('#add-edit .btn-submit').click(function (e) {
     e.preventDefault();
 
     let id = $(this).val(),
@@ -87,6 +94,11 @@ $('body').on('click', '.delete',function () {
                     data: {id: id},
                     dataType: 'json',
                     success: function (res) {
+                        console.log(res)
+                        if (res.error !== null){
+                            $('#confirm .modal-body .alert-danger').html(res.error.message).addClass('d-block');
+                            return false;
+                        }
                         deleteUser(res)
                         $('#confirm').modal('hide');
                     }
@@ -103,7 +115,7 @@ $('body').on('click', '.ok-button',function () {
         checked.each(function () {
             data += this.value + ',';
         })
-    let act = $(this).parents('.col-sm-4').find('option:selected').val()
+    let act = $(this).parents('.root-group-change-block').find('option:selected').val()
     if (!data){
         $('#alert .modal-body').text('Not selected users!');
         $('#alert').modal('show');
@@ -113,22 +125,26 @@ $('body').on('click', '.ok-button',function () {
     let new_url = '';
     switch (act){
 
-        case 'default':
+        case '3':
         $('#alert .modal-body').text('Choose an action!');
         $('#alert').modal('show');
 
         return false;
 
-        case 'del':
+        case '2':
         new_url = url_func + '/delete_user?type=del';
         modalConfirm(function (bool) {
             if (bool){
                 $.ajax({
                     url: new_url,
                     type: 'POST',
-                    data: {id: data, act: act},
+                    data: {id: data, act: 'del'},
                     dataType: 'json',
                     success: function (res) {
+                        if (res.error !== null){
+                            $('#confirm .modal-body .alert-danger').html(res.error.message).addClass('d-block');
+                            return false;
+                        }
                         deleteUser(res)
                         $('#confirm').modal('hide');
                     }
@@ -145,6 +161,11 @@ $('body').on('click', '.ok-button',function () {
             data: {id: data, act: act},
             dataType: 'json',
             success: function (res) {
+                if (res.error !== null){
+                    $('#alert .modal-body').text(res.error.message);
+                    $('#alert').modal('show');
+                    return false;
+                }
                 editStatusUsers(res)
             }
         })
@@ -153,11 +174,13 @@ $('body').on('click', '.ok-button',function () {
 })
 
 function modalConfirm (callback,id = null){
+    $('#confirm .alert-danger').removeClass('d-block');
+
     if (id !== null){
         const name = $('tr[id=tr-'+id+'] .name').text();
-        $('#confirm .modal-body').html('Are you sure you want to delete '+name+'?')
+        $('#confirm .modal-body .text').html('Are you sure you want to delete '+name+'?')
     } else {
-        $('#confirm .modal-body').html('Are you sure you want to delete selected users?')
+        $('#confirm .modal-body .text').html('Are you sure you want to delete selected users?')
     }
 
     $('#confirm').modal('show');
@@ -169,6 +192,27 @@ function modalConfirm (callback,id = null){
     $('#modal-btn-no').click(function () {
         callback(false);
         $('#confirm').modal('hide');
+    })
+}
+
+function showAll() {
+    $.ajax({
+        url: url_func + '/getUsers?type=show',
+        dataType: 'json',
+        success: function (res) {
+            console.log(res)
+            if (res.error !== null){
+                return false;
+            }
+            for (const item of res.user){
+                const status = item['status'] !== '0' ? 'active-circle' : '';
+                const el = '<tr id="tr-'+item.id+'"><td class="align-middle"><div class="custom-control custom-control-inline custom-checkbox custom-control-nameless m-0 align-top"><input type="checkbox" class="custom-control-input" id="item-'+item.id+'" value="'+item.id+'"><label class="custom-control-label" for="item-'+item.id+'"></label></div></td><td class="text-nowrap align-middle name">'+item['name_first']+' \n '+item['name_last']+'</td><td class="text-nowrap align-middle"><span class="role">'+item.role+'</span></td><td class="text-center align-middle"><i class="status fa fa-circle not-active-circle '+status+'"></i></td><td class="text-center align-middle"><div class="btn-group align-top"><button class="btn btn-sm btn-outline-secondary badge edit" type="button" data-toggle="modal" data-target="#add-edit" data-whatever="Edit" data-id="'+item.id+'">Edit</button><button class="btn btn-sm btn-outline-secondary badge delete" type="button" data-id="'+item.id+'"><i class="fa fa-trash"></i></button></div></td></tr>'
+                $('.content-section').prepend(el);
+            }
+
+
+
+        }
     })
 }
 

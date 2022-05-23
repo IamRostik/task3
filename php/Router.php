@@ -19,8 +19,11 @@ class Router
         $controller = \MainFunc::class;
         if(class_exists($controller)){
             $controllerObj = new $controller();
+
+            if (!is_object($controllerObj->pdo)) return ['error_db' => $controllerObj->pdo];
             $action = lcfirst(self::toUpperCamelCase($route[2]));
             if (method_exists($controllerObj, $action)){
+
             return $controllerObj->$action();
             }
         }

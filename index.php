@@ -21,17 +21,17 @@
                 <div class="card-title">
                   <h6 class="mr-2"><span>Users</span></h6>
                 </div>
-                  <div class="col-sm-4">
+                  <div class="col-sm-4 root-group-change-block">
                     <div class="row">
                           <div class="">
                               <button class="btn add" data-toggle="modal" data-target="#add-edit" data-whatever="Add">Add</button>
                           </div>
                           <div class="col">
                               <select name="status" id="status" class="form-control inline-block">
-                                  <option value="default" selected>Please Select</option>
+                                  <option value="3" selected>Please Select</option>
                                   <option value="1">Set active</option>
                                   <option value="0">Set not active</option>
-                                  <option value="del">Delete</option>
+                                  <option value="2">Delete</option>
                               </select>
                           </div>
                           <div class="">
@@ -40,7 +40,8 @@
                       </div>
                   </div>
                 <div class="e-table">
-                  <div class="table-responsive table-lg mt-3">
+
+                  <div class="table-responsive table-lg mt-3 place-for-alert">
                     <table class="table table-bordered">
                       <thead>
                         <tr>
@@ -56,44 +57,27 @@
                           <th>Actions</th>
                         </tr>
                       </thead>
-                      <tbody>
-                      <?php $users = include_once 'php/MainFunc.php'; if (isset($users)):?>
-                      <?php foreach ($users as $user): ?>
-                          <tr id="tr-<?=$user['id']?>">
-                              <td class="align-middle">
-                                  <div
-                                          class="custom-control custom-control-inline custom-checkbox custom-control-nameless m-0 align-top">
-                                      <input type="checkbox" class="custom-control-input" id="item-<?=$user['id']?>" value="<?=$user['id']?>">
-                                      <label class="custom-control-label" for="item-<?=$user['id']?>"></label>
-                                  </div>
-                              </td>
-                              <td class="text-nowrap align-middle name"><?=htmlspecialchars($user['name_first']) . PHP_EOL . htmlspecialchars($user['name_last'])?></td>
-                              <td class="text-nowrap align-middle"><span class="role"><?=htmlspecialchars($user['role'])?></span></td>
-                              <td class="text-center align-middle"><i class="status fa fa-circle not-active-circle <?= $user['status'] ? 'active-circle' :  ''?>"></i></td>
-                              <td class="text-center align-middle">
-                                  <div class="btn-group align-top">
-                                      <button class="btn btn-sm btn-outline-secondary badge edit" type="button" data-toggle="modal" data-target="#add-edit" data-whatever="Edit" data-id="<?=$user['id']?>">Edit</button>
-                                      <button class="btn btn-sm btn-outline-secondary badge delete" type="button" data-id="<?=$user['id']?>"><i
-                                                  class="fa fa-trash"></i></button>
-                                  </div>
-                              </td>
-                          </tr>
-                      <?php endforeach; endif; ?>
+                      <tbody class="content-section">
+
+
+                        <!--      CONTENT      -->
+
+
                       </tbody>
                     </table>
                   </div>
                 </div>
-                  <div class="col-sm-4">
+                  <div class="col-sm-4 root-group-change-block">
                       <div class="row">
                           <div class="">
                               <button class="btn add" data-toggle="modal" data-target="#add-edit" data-whatever="Add">Add</button>
                           </div>
                           <div class="col">
                               <select name="status" id="status" class="form-control inline-block">
-                                  <option value="default" selected>Please Select</option>
+                                  <option value="3" selected>Please Select</option>
                                   <option value="1">Set active</option>
                                   <option value="0">Set not active</option>
-                                  <option value="del">Delete</option>
+                                  <option value="2">Delete</option>
                               </select>
                           </div>
                           <div class="">
@@ -154,7 +138,7 @@
                       </div>
                       <div class="modal-footer">
                           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                          <button type="submit" class="submit btn btn-primary">Okay</button>
+                          <button type="button" class="btn-submit btn btn-primary">Okay</button>
                       </div>
                   </div>
               </div>
@@ -176,7 +160,8 @@
               <div class="modal-dialog" role="document">
                   <div class="modal-content">
                       <div class="modal-body">
-
+                          <div class="alert alert-danger d-none" role="alert"></div>
+                          <span class="text"></span>
                       </div>
                       <div class="modal-footer py-1">
                           <button type="button" class="btn btn-default" id="modal-btn-yes">Yes</button>

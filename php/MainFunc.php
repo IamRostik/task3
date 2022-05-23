@@ -1,10 +1,9 @@
 <?php
 
-include_once 'functions.php';
 include_once 'Router.php';
 class MainFunc{
 
-    private $pdo;
+    public $pdo;
 
     private $rules = [
         'name_first' => [
@@ -32,8 +31,13 @@ class MainFunc{
      */
     public function __construct()
     {
-        $this->pdo = include_once 'connect_db.php';
-
+        $pdo = include_once 'connect_data_db.php';
+        try {
+            $this->pdo = new \PDO($pdo[0], $pdo[1], $pdo[2], $pdo[3]);
+            $this->pdo->query("USE userms");
+        } catch (\PDOException $e){
+            $this->pdo = 'Database connect failed: ' . $e->getMessage();
+        }
     }
 
     /**
@@ -41,8 +45,20 @@ class MainFunc{
      * @return mixed
      */
     public function getUsers(){
-        $res = $this->pdo->query("SELECT * FROM `user` ORDER BY id");
-        return $res->fetchAll();
+        if (isset($_GET['type']) && $_GET['type'] == 'show') {
+            $res = $this->pdo->query("SELECT * FROM `user` ORDER BY id");
+            try {
+                $data = $res->fetchAll();
+                if (!$data) throw new Exception("User list is empty", 100);
+                $this->response['user'] = $data;
+                $this->response['status'] = true;
+            } catch (\PDOException |\Exception $e){
+                $this->response['error']['message'] = $e->getMessage();
+                $this->response['error']['code'] = $e->getCode();
+            }
+            echo json_encode($this->response);
+            return;
+        }
     }
 
     /**
@@ -55,14 +71,16 @@ class MainFunc{
         $res = $this->pdo->prepare("SELECT * FROM `user` WHERE id = ?");
         try {
             $res->execute([$id]);
-            $this->loadAttrs($res->fetch());
+            $data = $res->fetch();
+            if (!$data) throw new Exception("The user you want to edit does not exist. Refresh the page and try again.", 100);
+            $this->loadAttrs($data);
             $this->loadResponse($id);
         } catch (\PDOException |\Exception $e){
             $this->response['error']['message'] = $e->getMessage();
             $this->response['error']['code'] = $e->getCode();
         }
         echo json_encode($this->response);
-        die();
+        return;
         }
     }
 
@@ -85,7 +103,7 @@ class MainFunc{
             }
 
             echo json_encode($this->response);
-            die();
+            return;
         }
     }
 
@@ -101,13 +119,16 @@ class MainFunc{
             try {
                 $this->validate();
                 $res->execute([$this->attrs['name_first'], $this->attrs['name_last'], $this->attrs['status'], $this->attrs['role'], $id]);
+                if (!$res->rowCount()){
+                    throw new Exception("The user you want to edit does not exist. Refresh the page and try again.", 100);
+                }
                 $this->loadResponse($id);
             } catch(\PDOException |\Exception $e) {
                 $this->response['error']['message'] = $e->getMessage();
                 $this->response['error']['code'] = $e->getCode();
             }
             echo json_encode($this->response);
-            die();
+            return;
         }
     }
 
@@ -119,10 +140,24 @@ class MainFunc{
         if (isset($_GET['type']) && !empty($_POST) && $_GET['type'] == 'edit_some'){
             $ids = explode(',',$_POST['id']);
             $res = $this->pdo->prepare("UPDATE `user` SET status = ? WHERE id = ?");
-            foreach ($ids as $id) $res->execute([$_POST['act'], $id]);
-            list($this->response['status'], $this->response['user']['id'], $this->response['user']['status']) = [true, $ids, $_POST['act']];
+            try {
+                $this->pdo->beginTransaction();
+                foreach ($ids as $id) {
+                    $res->execute([$_POST['act'], $id]);
+                    if (!$res->rowCount()) {
+                        throw new Exception("The users/user you want to edit does not exist. Refresh the page and try again.", 100);
+                    }
+                }
+                list($this->response['status'], $this->response['user']['id'], $this->response['user']['status']) = [true, $ids, $_POST['act']];
+                $this->pdo->commit();
+            } catch (\PDOException |\Exception $e){
+                $this->pdo->rollBack();
+                $this->response['error']['message'] = $e->getMessage();
+                $this->response['error']['code'] = $e->getCode();
+            }
+
             echo json_encode($this->response);
-            die();
+            return;
         }
     }
 
@@ -134,11 +169,25 @@ class MainFunc{
         if (isset($_GET['type']) && $_GET['type'] == 'del' && !empty($_POST)){
             $ids = explode(',',$_POST['id']);
             $res = $this->pdo->prepare("DELETE FROM `user` WHERE id = ?");
-            foreach ($ids as $id) $res->execute([$id]);
-            $this->response['status'] = true;
-            $this->response['id'] = $ids;
+            try {
+                $this->pdo->beginTransaction();
+                foreach ($ids as $id) {
+                    $res->execute([$id]);
+                    if (!$res->rowCount()) {
+                        throw new Exception("The users/user you want to delete does not exist. Refresh the page and try again.", 100);
+                    }
+                }
+                $this->response['status'] = true;
+                $this->response['id'] = $ids;
+                $this->pdo->commit();
+            }
+            catch (\PDOException |\Exception $e){
+                $this->pdo->rollBack();
+                $this->response['error']['message'] = $e->getMessage();
+                $this->response['error']['code'] = $e->getCode();
+            }
             echo json_encode($this->response);
-            die();
+            return;
         }
     }
 
@@ -181,6 +230,8 @@ class MainFunc{
 
         if ($error) throw new \Exception($error,100);
     }
-
 }
-return \php\Router::dispatch($_SERVER['PHP_SELF']);
+
+$query = \php\Router::dispatch($_SERVER['PHP_SELF']);
+if (isset($query['error_db'])) echo json_encode(['status' => false, 'error' => $query['error_db']]);
+
