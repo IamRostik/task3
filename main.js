@@ -1,5 +1,5 @@
 let url_func = location.protocol + '//' + location.hostname + '/php/MainFunc.php';
-
+// Виводимо всіх юзерів
 showAll()
 
 // Груповий чекбокс
