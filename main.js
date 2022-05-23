@@ -96,7 +96,6 @@ $('body').on('click', '.delete',function () {
                     dataType: 'json',
                     success: function (res) {
                         i++;
-                        console.log(res)
                         if (res.error !== null){
                             $('#confirm .modal-body .alert-danger').html(res.error.message).addClass('d-block');
                             return false;
@@ -144,11 +143,9 @@ $('body').on('click', '.ok-button',function () {
                     data: {id: data, act: 'del'},
                     dataType: 'json',
                     success: function (res) {
-                        console.log(res)
                         i++;
                         if (res.error !== null){
                             $('#confirm .modal-body .alert-danger').html(res.error.message).addClass('d-block');
-
                             return false;
                         }
                         deleteUser(res)
