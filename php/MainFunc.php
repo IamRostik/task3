@@ -231,7 +231,8 @@ class MainFunc{
         if ($error) throw new \Exception($error,100);
     }
 }
-
 $query = \php\Router::dispatch($_SERVER['PHP_SELF']);
+
+// Якщо підключення до бази данних не спрацює, додаток відправить помилку в консоль.
 if (isset($query['error_db'])) echo json_encode(['status' => false, 'error' => $query['error_db']]);
 
