@@ -85,15 +85,17 @@ $('#add-edit .btn-submit').click(function (e) {
 
 // Кнопка видалення юзерів
 $('body').on('click', '.delete',function () {
-    const id = $(this).data('id');
+    let id = $(this).data('id');
+    let i = 1;
         modalConfirm(function (bool) {
-            if (bool){
+            if (bool && i === 1){
                 $.ajax({
                     url: url_func + '/delete_user?type=del',
                     type: 'POST',
                     data: {id: id},
                     dataType: 'json',
                     success: function (res) {
+                        i++;
                         console.log(res)
                         if (res.error !== null){
                             $('#confirm .modal-body .alert-danger').html(res.error.message).addClass('d-block');
@@ -133,16 +135,20 @@ $('body').on('click', '.ok-button',function () {
 
         case '2':
         new_url = url_func + '/delete_user?type=del';
+        let i = 1;
         modalConfirm(function (bool) {
-            if (bool){
+            if (bool && i === 1){
                 $.ajax({
                     url: new_url,
                     type: 'POST',
                     data: {id: data, act: 'del'},
                     dataType: 'json',
                     success: function (res) {
+                        console.log(res)
+                        i++;
                         if (res.error !== null){
                             $('#confirm .modal-body .alert-danger').html(res.error.message).addClass('d-block');
+
                             return false;
                         }
                         deleteUser(res)
@@ -207,7 +213,7 @@ function showAll() {
             for (const item of res.user){
                 const status = item['status'] !== '0' ? 'active-circle' : '';
                 const el = '<tr id="tr-'+item.id+'"><td class="align-middle"><div class="custom-control custom-control-inline custom-checkbox custom-control-nameless m-0 align-top"><input type="checkbox" class="custom-control-input" id="item-'+item.id+'" value="'+item.id+'"><label class="custom-control-label" for="item-'+item.id+'"></label></div></td><td class="text-nowrap align-middle name">'+item['name_first']+' \n '+item['name_last']+'</td><td class="text-nowrap align-middle"><span class="role">'+item.role+'</span></td><td class="text-center align-middle"><i class="status fa fa-circle not-active-circle '+status+'"></i></td><td class="text-center align-middle"><div class="btn-group align-top"><button class="btn btn-sm btn-outline-secondary badge edit" type="button" data-toggle="modal" data-target="#add-edit" data-whatever="Edit" data-id="'+item.id+'">Edit</button><button class="btn btn-sm btn-outline-secondary badge delete" type="button" data-id="'+item.id+'"><i class="fa fa-trash"></i></button></div></td></tr>'
-                $('.content-section').prepend(el);
+                $('.content-section').append(el);
             }
 
 
