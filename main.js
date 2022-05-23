@@ -200,8 +200,8 @@ function showAll() {
         url: url_func + '/getUsers?type=show',
         dataType: 'json',
         success: function (res) {
-            console.log(res)
             if (res.error !== null){
+                console.log(res.error)
                 return false;
             }
             for (const item of res.user){
