@@ -145,7 +145,7 @@ class MainFunc{
                 foreach ($ids as $id) {
                     $res->execute([$_POST['act'], $id]);
                     if (!$res->rowCount()) {
-                        throw new Exception("The users/user you want to edit does not exist. Refresh the page and try again.", 100);
+                        throw new Exception("The user/users you want to edit do not exist. Refresh the page and try again.", 100);
                     }
                 }
                 list($this->response['status'], $this->response['user']['id'], $this->response['user']['status']) = [true, $ids, $_POST['act']];
@@ -174,7 +174,7 @@ class MainFunc{
                 foreach ($ids as $id) {
                     $res->execute([$id]);
                     if (!$res->rowCount()) {
-                        throw new Exception("The users/user you want to delete does not exist. Refresh the page and try again.", 100);
+                        throw new Exception("The user/users you want to delete do not exist. Refresh the page and try again.", 100);
                     }
                 }
                 $this->response['status'] = true;
