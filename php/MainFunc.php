@@ -141,17 +141,10 @@ class MainFunc{
             $ids = explode(',',$_POST['id']);
             $res = $this->pdo->prepare("UPDATE `user` SET status = ? WHERE id = ?");
             try {
-                $this->pdo->beginTransaction();
-                foreach ($ids as $id) {
-                    $res->execute([$_POST['act'], $id]);
-                    if (!$res->rowCount()) {
-                        throw new Exception("The user/users you want to edit do not exist. Refresh the page and try again.", 100);
-                    }
-                }
+                $this->customTransaction($ids, 'edit');
+                foreach ($ids as $id) $res->execute([$_POST['act'], $id]);
                 list($this->response['status'], $this->response['user']['id'], $this->response['user']['status']) = [true, $ids, $_POST['act']];
-                $this->pdo->commit();
             } catch (\PDOException |\Exception $e){
-                $this->pdo->rollBack();
                 $this->response['error']['message'] = $e->getMessage();
                 $this->response['error']['code'] = $e->getCode();
             }
@@ -170,19 +163,12 @@ class MainFunc{
             $ids = explode(',',$_POST['id']);
             $res = $this->pdo->prepare("DELETE FROM `user` WHERE id = ?");
             try {
-                $this->pdo->beginTransaction();
-                foreach ($ids as $id) {
-                    $res->execute([$id]);
-                    if (!$res->rowCount()) {
-                        throw new Exception("The user/users you want to delete do not exist. Refresh the page and try again.", 100);
-                    }
-                }
+                $this->customTransaction($ids, 'delete');
+                foreach ($ids as $id) $res->execute([$id]);
                 $this->response['status'] = true;
                 $this->response['id'] = $ids;
-                $this->pdo->commit();
             }
             catch (\PDOException |\Exception $e){
-                $this->pdo->rollBack();
                 $this->response['error']['message'] = $e->getMessage();
                 $this->response['error']['code'] = $e->getCode();
             }
@@ -212,6 +198,15 @@ class MainFunc{
         $this->response['user']['id'] = $id;
         foreach ($this->attrs as $name => $value){
             $this->response['user'][$name] = $value;
+        }
+    }
+
+    private function customTransaction(array $ids, string $action){
+        $res = $this->pdo->prepare("SELECT * FROM `user` WHERE id = ?");
+        foreach ($ids as $id) {
+            $res->execute([$id]);
+            $data = $res->fetch();
+            if (!$data) throw new Exception("The user/users you want to $action do not exist. Refresh the page and try again.", 100);
         }
     }
 
